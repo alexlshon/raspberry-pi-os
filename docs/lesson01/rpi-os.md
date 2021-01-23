@@ -106,7 +106,7 @@ OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%_c.o)
 OBJ_FILES += $(ASM_FILES:$(SRC_DIR)/%.S=$(BUILD_DIR)/%_s.o)
 ```
 
-Here we are building an array of all object files (`OBJ_FILES`) created from the concatenation of both C and assembler source files.
+Here we are building an array of all object files (`OBJ_FILES`) created from the concatenation of both C and assembler source files (see [Substitution References](https://www.gnu.org/software/make/manual/html_node/Substitution-Refs.html)).
 
 ```
 DEP_FILES = $(OBJ_FILES:%.o=%.d)
@@ -286,7 +286,7 @@ void uart_init ( void )
     delay(150);
     put32(GPPUDCLK0,0);
 
-    put32(AUX_ENABLES,1);                   //Enable mini uart (this also enables access to it registers)
+    put32(AUX_ENABLES,1);                   //Enable mini uart (this also enables access to its registers)
     put32(AUX_MU_CNTL_REG,0);               //Disable auto flow control and disable receiver and transmitter (for now)
     put32(AUX_MU_IER_REG,0);                //Disable receive and transmit interrupts
     put32(AUX_MU_LCR_REG,3);                //Enable 8 bit mode
@@ -367,7 +367,6 @@ Now our Mini UART is connected to the GPIO pins, and the pins are configured. Th
     put32(AUX_MU_LCR_REG,3);                //Enable 8 bit mode
     put32(AUX_MU_MCR_REG,0);                //Set RTS line to be always high
     put32(AUX_MU_BAUD_REG,270);             //Set baud rate to 115200
-    put32(AUX_MU_IIR_REG,6);                //Clear FIFO
 
     put32(AUX_MU_CNTL_REG,3);               //Finally, enable transmitter and receiver
 ```
@@ -474,7 +473,7 @@ disable_commandline_tags=1
 Now that we have gone through all of the source code, it is time to see it work. To build and test the kernel you need to  do the following:
 
 1. Execute `./build.sh` or `./build.bat` from [src/lesson01](https://github.com/s-matyukevich/raspberry-pi-os/tree/master/src/lesson01) in order to build the kernel. 
-1. Copy the generated `kernel8.img` file to the `boot` partition of your Raspberry Pi flash card and delete `kernel7.img` as well as any other `kernel*.img` files that be present on your SD card. Make sure you left all other files in the boot partition untouched (see [43](https://github.com/s-matyukevich/raspberry-pi-os/issues/43) and [158](https://github.com/s-matyukevich/raspberry-pi-os/issues/158) issues for details)
+1. Copy the generated `kernel8.img` file to the `boot` partition of your Raspberry Pi flash card and delete `kernel7.img` as well as any other `kernel*.img` files that may be present on your SD card. Make sure you left all other files in the boot partition untouched (see [43](https://github.com/s-matyukevich/raspberry-pi-os/issues/43) and [158](https://github.com/s-matyukevich/raspberry-pi-os/issues/158) issues for details)
 1. Modify the `config.txt` file as described in the previous section.
 1. Connect the USB-to-TTL serial cable as described in the [Prerequisites](../Prerequisites.md).
 1. Power on your Raspberry Pi.
@@ -485,7 +484,7 @@ Note that the sequence of steps described above asumes that you have Raspbian in
 1. Prepare your SD card:
     * Use an MBR partition table
     * Format the boot partition as FAT32
-    > The card should be formatted exactly in the same way as it is required to install Raspbian. Check `HOW TO FORMAT AN SD CARD AS FAT` section in the [official documenation](https://www.raspberrypi.org/documentation/installation/noobs.md) for more information.
+    > The card should be formatted exactly in the same way as it is required to install Raspbian. Check `HOW TO FORMAT AN SD CARD AS FAT` section in the [official documentation](https://www.raspberrypi.org/documentation/installation/noobs.md) for more information.
 1. Copy the following files to the card:
     * [bootcode.bin](https://github.com/raspberrypi/firmware/blob/master/boot/bootcode.bin) This is the GPU bootloader, it contains the GPU code to start the GPU and load the GPU firmware. 
     * [start.elf](https://github.com/raspberrypi/firmware/blob/master/boot/start.elf) This is the GPU firmware. It reads `config.txt` and enables the GPU to load and run ARM specific user code from `kernel8.img`
